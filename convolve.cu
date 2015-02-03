@@ -100,7 +100,7 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
 
         for(int i = 0; i < 5; i++)
         {
-            printf("%d, ", out[i]);
+            printf("%f, ", out[i]);
         }
 
         printf("\n");
