@@ -50,8 +50,8 @@ void convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
     int i, j, k;
 
     // check validity of params
-    if(!in || !out || !kernel) return false;
-    if(dataSize <=0 || kernelSize <= 0) return false;
+    if(!in || !out || !kernel) throw "In, Out and Kernal cannot be NULL";
+    if(dataSize <=0 || kernelSize <= 0) throw "Size cannot be neg";
 
     // start convolution from out[kernelSize-1] to out[dataSize-1] (last)
     for(i = kernelSize-1; i < dataSize; ++i)
@@ -95,6 +95,7 @@ int main(int argc, char** argv)
     float out[5];
     float k[2] = {2,1};
 
+    unsigned int timer = 0;
     cutilCheckError(cutCreateTimer(&timer));
     cutilCheckError(cutStartTimer(timer));
 
