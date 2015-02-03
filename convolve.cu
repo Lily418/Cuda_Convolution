@@ -63,12 +63,12 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
         }
 
         // convolution from out[0] to out[kernelSize-2]
-        for(i = 0; i < kernelSize - 1; ++i)
+        for(λ = 0; λ < kernelSize - 1; ++λ)
         {
-            out[i] = 0;                             // init to 0 before sum
+            out[λ] = 0;                             // init to 0 before sum
 
-            for(j = i, k = 0; j >= 0; --j, ++k)
-                out[i] += in[j] * kernel[k];
+            for(j = λ, k = 0; j >= 0; --j, ++k)
+                out[λ] += in[j] * kernel[k];
         }
 
             return true;
