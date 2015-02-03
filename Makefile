@@ -8,14 +8,14 @@
 EXECUTABLE	:= smb
 
 # CUDA source files (compiled with nvcc)
-CUFILES		:= reduce.cu
+CUFILES		:= convolve.cu
 
 # CUDA dependency files
 CU_DEPS		:= Makefile
 
 # C/C++ source files (compiled with gcc/g++)
-CCFILES		:= 
-		   
+CCFILES		:=
+
 
 ################################################################################
 # Rules and targets
@@ -35,4 +35,3 @@ include $(ROOTDIR)/common.mk
 
 # flag to report on use of registers, shared memory, etc
 # NVCCFLAGS += -Xptxas -v
-
