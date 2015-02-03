@@ -45,20 +45,20 @@ __global__ void convolve(float* data_in, float initial)
 /*
 * Reference CPU implementation, taken from http://www.songho.ca/dsp/convolution/convolution.html
 */
-void convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSize)
+bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSize)
 {
     int i, j, k;
 
     // check validity of params
-    if(!in || !out || !kernel) throw "In, Out and Kernal cannot be NULL";
-    if(dataSize <=0 || kernelSize <= 0) throw "Size cannot be neg";
+    if(!in || !out || !kernel) return false;
+    if(dataSize <=0 || kernelSize <= 0) return false;
 
     // start convolution from out[kernelSize-1] to out[dataSize-1] (last)
     for(i = kernelSize-1; i < dataSize; ++i)
     {
         out[i] = 0;                             // init to 0 before accumulate
 
-        for(j = i, k = 0; k < kernelSize; --j, ++k) {
+        for(j = i, k = 0; k < kernelSize; --j, ++k)
             out[i] += in[j] * kernel[k];
         }
 
@@ -67,110 +67,107 @@ void convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
         {
             out[i] = 0;                             // init to 0 before sum
 
-            for(j = i, k = 0; j >= 0; --j, ++k) {
+            for(j = i, k = 0; j >= 0; --j, ++k)
                 out[i] += in[j] * kernel[k];
-            }
-
         }
-    }
 
-
+            return true;
 }
 
 
-/*
-* Main program and benchmarking
-*/
-int main(int argc, char** argv)
-{
-    int devID;
-    cudaDeviceProp props;
-
-    // get number of SMs on this GPU
-    cutilSafeCall(cudaGetDevice(&devID));
-    cutilSafeCall(cudaGetDeviceProperties(&props, devID));
-
-    // allocate host memory
-    float in[5] = {3, 4, 5, 0, 0};
-    float out[5];
-    float k[2] = {2,1};
-
-    unsigned int timer = 0;
-    cutilCheckError(cutCreateTimer(&timer));
-    cutilCheckError(cutStartTimer(timer));
-
-    convolve1D(in, out, 5, k, 2);
-
-    for(int i = 0; i < 5; i++)
+        /*
+        * Main program and benchmarking
+        */
+        int main(int argc, char** argv)
     {
-        printf("%d, ", out[i]);
+        int devID;
+        cudaDeviceProp props;
+
+        // get number of SMs on this GPU
+        cutilSafeCall(cudaGetDevice(&devID));
+        cutilSafeCall(cudaGetDeviceProperties(&props, devID));
+
+        // allocate host memory
+        float in[5] = {3, 4, 5, 0, 0};
+        float out[5];
+        float k[2] = {2,1};
+
+        unsigned int timer = 0;
+        cutilCheckError(cutCreateTimer(&timer));
+        cutilCheckError(cutStartTimer(timer));
+
+        convolve1D(in, out, 5, k, 2);
+
+        for(int i = 0; i < 5; i++)
+        {
+            printf("%d, ", out[i]);
+        }
+
+        printf("\n");
+
+        cutilCheckError(cutStopTimer(timer));
+        //printf("%d \n", success);
+
+        // allocate device memory
+        //float* d_data_in;
+        //cutilSafeCall(cudaMalloc((void**) &d_data_in, mem_size));
+
+        // copy host memory to device
+
+
+        // set up kernel for execution
+        //printf("Run %d Kernels.\n\n", ITERS);
+        //unsigned int timer = 0;
+        //cutilCheckError(cutCreateTimer(&timer));
+        //cutilCheckError(cutStartTimer(timer));
+
+        // execute kernel
+        //for (int j = 0; j < ITERS; j++)
+        //{
+        //  cutilSafeCall(cudaMemcpy(d_data_in, h_data_in,
+        //  mem_size, cudaMemcpyHostToDevice));
+
+        //   reduce<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, 0.0);
+        //   reduce<<<GRID_SIZE, BLOCK_SIZE / 2>>>(d_data_in, 0.0);
+        //   reduce<<<GRID_SIZE, BLOCK_SIZE / 4>>>(d_data_in, 0.0);
+
+
+        // copy result from device to host
+        //   cutilSafeCall(cudaMemcpy(h_data_out, d_data_in,
+        //   mem_size, cudaMemcpyDeviceToHost));
+
+        // Finish the reduction on the host to avoid the overhead of setting up the kernal for small n
+        //h_data_out[0] = host_reduce(h_data_out, 0.0, VECTOR_SIZE / 8);
+
+        //  }
+
+        // check if kernel execution generated and error
+        //  cutilCheckMsg("Kernel execution failed");
+
+        // wait for device to finish
+        //  cudaThreadSynchronize();
+
+        // stop and destroy timer
+        //  cutilCheckError(cutStopTimer(timer));
+        //  double dSeconds = cutGetTimerValue(timer)/(1000.0);
+        //  double dNumOps = ITERS * size;
+        //  double gflops = dNumOps/dSeconds/1.0e9;
+
+        //Log througput
+        //  printf("Throughput = %.4f GFlop/s\n", gflops);
+        //  cutilCheckError(cutDeleteTimer(timer));
+
+
+
+        // error check
+        //  printf("Host reduce   : %.4f\n", host_reduce(h_data_in, 0.0, VECTOR_SIZE));
+        //  printf("Device reduce : %.4f\n", h_data_out[0]);
+
+        // clean up memory
+        //  free(h_data_in);
+        //  free(h_data_out);
+        //  cutilSafeCall(cudaFree(d_data_in));
+
+        // exit and clean up device status
+        //  cudaThreadExit();
     }
-
-    printf("\n");
-
-    cutilCheckError(cutStopTimer(timer));
-    //printf("%d \n", success);
-
-    // allocate device memory
-    //float* d_data_in;
-    //cutilSafeCall(cudaMalloc((void**) &d_data_in, mem_size));
-
-    // copy host memory to device
-
-
-    // set up kernel for execution
-    //printf("Run %d Kernels.\n\n", ITERS);
-    //unsigned int timer = 0;
-    //cutilCheckError(cutCreateTimer(&timer));
-    //cutilCheckError(cutStartTimer(timer));
-
-    // execute kernel
-    //for (int j = 0; j < ITERS; j++)
-    //{
-    //  cutilSafeCall(cudaMemcpy(d_data_in, h_data_in,
-    //  mem_size, cudaMemcpyHostToDevice));
-
-    //   reduce<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, 0.0);
-    //   reduce<<<GRID_SIZE, BLOCK_SIZE / 2>>>(d_data_in, 0.0);
-    //   reduce<<<GRID_SIZE, BLOCK_SIZE / 4>>>(d_data_in, 0.0);
-
-
-    // copy result from device to host
-    //   cutilSafeCall(cudaMemcpy(h_data_out, d_data_in,
-    //   mem_size, cudaMemcpyDeviceToHost));
-
-    // Finish the reduction on the host to avoid the overhead of setting up the kernal for small n
-    //h_data_out[0] = host_reduce(h_data_out, 0.0, VECTOR_SIZE / 8);
-
-    //  }
-
-    // check if kernel execution generated and error
-    //  cutilCheckMsg("Kernel execution failed");
-
-    // wait for device to finish
-    //  cudaThreadSynchronize();
-
-    // stop and destroy timer
-    //  cutilCheckError(cutStopTimer(timer));
-    //  double dSeconds = cutGetTimerValue(timer)/(1000.0);
-    //  double dNumOps = ITERS * size;
-    //  double gflops = dNumOps/dSeconds/1.0e9;
-
-    //Log througput
-    //  printf("Throughput = %.4f GFlop/s\n", gflops);
-    //  cutilCheckError(cutDeleteTimer(timer));
-
-
-
-    // error check
-    //  printf("Host reduce   : %.4f\n", host_reduce(h_data_in, 0.0, VECTOR_SIZE));
-    //  printf("Device reduce : %.4f\n", h_data_out[0]);
-
-    // clean up memory
-    //  free(h_data_in);
-    //  free(h_data_out);
-    //  cutilSafeCall(cudaFree(d_data_in));
-
-    // exit and clean up device status
-    //  cudaThreadExit();
-}
