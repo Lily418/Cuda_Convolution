@@ -1,49 +1,51 @@
 
 /*
- * Week 3
- * Parallel Programming
- * 2011-2012
- * University of Birmingham
- *
- * This is a first step towards implementing "parallel reduce".
- * Reducing means using an operation to aggregate the values of
- * a data type, such an array or a list.
- *
- * For example, to calculate the sum we aggregate addition:
- *     a1 + a2 + a3 + a4 ...
- * To calculate the maximum we aggregate the max operation:
- *     max (a1, max(a2, max(a3, ...
- * Note that the order in which the device map, which is parallel,
- * and the host map, which is sequential, will differ, therefore the
- * operation needs to be associative.
- * Operations such as +, * or max are associative, but function of
- * two arguments, in general, are not!
- */
+* Week 3
+* Parallel Programming
+* 2011-2012
+* University of Birmingham
+*
+* This is a first step towards implementing "parallel reduce".
+* Reducing means using an operation to aggregate the values of
+* a data type, such an array or a list.
+*
+* For example, to calculate the sum we aggregate addition:
+*     a1 + a2 + a3 + a4 ...
+* To calculate the maximum we aggregate the max operation:
+*     max (a1, max(a2, max(a3, ...
+* Note that the order in which the device map, which is parallel,
+* and the host map, which is sequential, will differ, therefore the
+* operation needs to be associative.
+* Operations such as +, * or max are associative, but function of
+* two arguments, in general, are not!
+*/
 
 
 #include "cutil_inline.h"
 
+const int ITERS = 100;
+
 /*
- * Calculate the reduce by f of all elements in data_in and
- * store the result at a location of your choice in in data_out.
- *
- * The initial implementation is correct but totally sequential,
- * and it only uses one thread.
- * Improve it, to take advantage of GPU parallelism.
- * To ensure performance, identify and avoid divergences!
- *
- * THIS YOU NEED TO CHANGE!
- */
+* Calculate the reduce by f of all elements in data_in and
+* store the result at a location of your choice in in data_out.
+*
+* The initial implementation is correct but totally sequential,
+* and it only uses one thread.
+* Improve it, to take advantage of GPU parallelism.
+* To ensure performance, identify and avoid divergences!
+*
+* THIS YOU NEED TO CHANGE!
+*/
 __global__ void convolve(float* data_in, float initial)
 {
-  int tx = threadIdx.x;
-  int bk = blockIdx.x;
+    int tx = threadIdx.x;
+    int bk = blockIdx.x;
 }
 
 /*
- * Reference CPU implementation, taken from http://www.songho.ca/dsp/convolution/convolution.html
- */
-bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSize)
+* Reference CPU implementation, taken from http://www.songho.ca/dsp/convolution/convolution.html
+*/
+void convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSize)
 {
     int i, j, k;
 
@@ -56,7 +58,7 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
     {
         out[i] = 0;                             // init to 0 before accumulate
 
-        for(j = i, k = 0; k < kernelSize; --j, ++k)
+        for(j = i, k = 0; k < kernelSize; --j, ++k) {
             out[i] += in[j] * kernel[k];
         }
 
@@ -65,93 +67,109 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
         {
             out[i] = 0;                             // init to 0 before sum
 
-            for(j = i, k = 0; j >= 0; --j, ++k)
+            for(j = i, k = 0; j >= 0; --j, ++k) {
                 out[i] += in[j] * kernel[k];
             }
 
-            return true;
         }
+    }
+
+
+}
+
 
 /*
- * Main program and benchmarking
- */
+* Main program and benchmarking
+*/
 int main(int argc, char** argv)
 {
-  int devID;
-  cudaDeviceProp props;
+    int devID;
+    cudaDeviceProp props;
 
-  // get number of SMs on this GPU
-  cutilSafeCall(cudaGetDevice(&devID));
-  cutilSafeCall(cudaGetDeviceProperties(&props, devID));
+    // get number of SMs on this GPU
+    cutilSafeCall(cudaGetDevice(&devID));
+    cutilSafeCall(cudaGetDeviceProperties(&props, devID));
 
-  // allocate host memory
-  float in[5] = {3, 4, 5, 0, 0};
-  float out[5];
-  float k[2] = {2,1};
+    // allocate host memory
+    float in[5] = {3, 4, 5, 0, 0};
+    float out[5];
+    float k[2] = {2,1};
 
-  bool success = convolve1D(in, out, 5, k, 2);
-  printf("%d \n", success);
+    cutilCheckError(cutCreateTimer(&timer));
+    cutilCheckError(cutStartTimer(timer));
 
-  // allocate device memory
-  //float* d_data_in;
-  //cutilSafeCall(cudaMalloc((void**) &d_data_in, mem_size));
+    convolve1D(in, out, 5, k, 2);
 
-  // copy host memory to device
+    for(int i = 0; i < 5; i++)
+    {
+        printf("%d, ", out[i]);
+    }
 
+    printf("\n");
 
-  // set up kernel for execution
-  //printf("Run %d Kernels.\n\n", ITERS);
-  //unsigned int timer = 0;
-  //cutilCheckError(cutCreateTimer(&timer));
-  //cutilCheckError(cutStartTimer(timer));
+    cutilCheckError(cutStopTimer(timer));
+    //printf("%d \n", success);
 
-  // execute kernel
-  //for (int j = 0; j < ITERS; j++)
-  //{
-  //  cutilSafeCall(cudaMemcpy(d_data_in, h_data_in,
-  //  mem_size, cudaMemcpyHostToDevice));
+    // allocate device memory
+    //float* d_data_in;
+    //cutilSafeCall(cudaMalloc((void**) &d_data_in, mem_size));
 
-//   reduce<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, 0.0);
-//   reduce<<<GRID_SIZE, BLOCK_SIZE / 2>>>(d_data_in, 0.0);
-//   reduce<<<GRID_SIZE, BLOCK_SIZE / 4>>>(d_data_in, 0.0);
+    // copy host memory to device
 
 
-     // copy result from device to host
-//   cutilSafeCall(cudaMemcpy(h_data_out, d_data_in,
-//   mem_size, cudaMemcpyDeviceToHost));
+    // set up kernel for execution
+    //printf("Run %d Kernels.\n\n", ITERS);
+    //unsigned int timer = 0;
+    //cutilCheckError(cutCreateTimer(&timer));
+    //cutilCheckError(cutStartTimer(timer));
 
-     // Finish the reduction on the host to avoid the overhead of setting up the kernal for small n
-     //h_data_out[0] = host_reduce(h_data_out, 0.0, VECTOR_SIZE / 8);
+    // execute kernel
+    //for (int j = 0; j < ITERS; j++)
+    //{
+    //  cutilSafeCall(cudaMemcpy(d_data_in, h_data_in,
+    //  mem_size, cudaMemcpyHostToDevice));
 
-//  }
-
-  // check if kernel execution generated and error
-//  cutilCheckMsg("Kernel execution failed");
-
-  // wait for device to finish
-//  cudaThreadSynchronize();
-
-  // stop and destroy timer
-//  cutilCheckError(cutStopTimer(timer));
-//  double dSeconds = cutGetTimerValue(timer)/(1000.0);
-//  double dNumOps = ITERS * size;
-//  double gflops = dNumOps/dSeconds/1.0e9;
-
-  //Log througput
-//  printf("Throughput = %.4f GFlop/s\n", gflops);
-//  cutilCheckError(cutDeleteTimer(timer));
+    //   reduce<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, 0.0);
+    //   reduce<<<GRID_SIZE, BLOCK_SIZE / 2>>>(d_data_in, 0.0);
+    //   reduce<<<GRID_SIZE, BLOCK_SIZE / 4>>>(d_data_in, 0.0);
 
 
+    // copy result from device to host
+    //   cutilSafeCall(cudaMemcpy(h_data_out, d_data_in,
+    //   mem_size, cudaMemcpyDeviceToHost));
 
-  // error check
-//  printf("Host reduce   : %.4f\n", host_reduce(h_data_in, 0.0, VECTOR_SIZE));
-//  printf("Device reduce : %.4f\n", h_data_out[0]);
+    // Finish the reduction on the host to avoid the overhead of setting up the kernal for small n
+    //h_data_out[0] = host_reduce(h_data_out, 0.0, VECTOR_SIZE / 8);
 
-  // clean up memory
-//  free(h_data_in);
-//  free(h_data_out);
-//  cutilSafeCall(cudaFree(d_data_in));
+    //  }
 
-  // exit and clean up device status
-//  cudaThreadExit();
+    // check if kernel execution generated and error
+    //  cutilCheckMsg("Kernel execution failed");
+
+    // wait for device to finish
+    //  cudaThreadSynchronize();
+
+    // stop and destroy timer
+    //  cutilCheckError(cutStopTimer(timer));
+    //  double dSeconds = cutGetTimerValue(timer)/(1000.0);
+    //  double dNumOps = ITERS * size;
+    //  double gflops = dNumOps/dSeconds/1.0e9;
+
+    //Log througput
+    //  printf("Throughput = %.4f GFlop/s\n", gflops);
+    //  cutilCheckError(cutDeleteTimer(timer));
+
+
+
+    // error check
+    //  printf("Host reduce   : %.4f\n", host_reduce(h_data_in, 0.0, VECTOR_SIZE));
+    //  printf("Device reduce : %.4f\n", h_data_out[0]);
+
+    // clean up memory
+    //  free(h_data_in);
+    //  free(h_data_out);
+    //  cutilSafeCall(cudaFree(d_data_in));
+
+    // exit and clean up device status
+    //  cudaThreadExit();
 }
