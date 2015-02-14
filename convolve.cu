@@ -25,6 +25,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -83,6 +84,21 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
     return true;
 }
 
+float[] splitFloats(string line){
+    std::vector<float> floats;
+    int seen_whitespace = 1;
+    for(std::string::size_type i = 0; i < line.size(); ++i) {
+        if(line[i] == ' ') seen_whitespace = 1;
+        if(seen_whitespace){
+            floats.push_back(strtof(&line[i]));
+            seen_whitespace = 0;
+        }
+
+    }
+
+    return &floats[0];
+}
+
 /*
 * Main program and benchmarking
 */
@@ -96,18 +112,12 @@ int main(int argc, char** argv)
     cutilSafeCall(cudaGetDeviceProperties(&props, devID));
 
     string line;
-    ifstream myfile ("sample.txt");
-    if (myfile.is_open())
-    {
-        while ( getline (myfile,line) )
-        {
-            cout << line << '\n';
-        }
-    myfile.close();
-    }
+    ifstream sample ("sample.txt");
+    getline (myfile,line)
+    sample.close();
 
     // allocate host memory
-    float in[5] = {3, 4, 5, 0, 0};
+    float in[5] = splitFloats(line);
     float out[5];
     float k[2] = {2,1};
 
