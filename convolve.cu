@@ -51,7 +51,7 @@ __global__ void convolve(float* data_in, float* data_out, float* kernel, int ker
     int pos = (bk * BLOCK_SIZE) + tx;
     data_out[pos] = 0;
 
-    for(int i = 0; i < kernalSize; i++){
+    for(int i = 0; i < kernelSize; i++){
         if(pos - i > 0) {
             data_out[pos] += kernel[i] * data_in[pos - i];
         }
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
             break;
 
             case 1:
-            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out);
+            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out, &k[0], k.size());
             break;
 
             case 2:
