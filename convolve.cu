@@ -128,35 +128,38 @@ int main(int argc, char** argv)
 
     unsigned int timer = 0;
     cutilCheckError(cutCreateTimer(&timer));
-    cutilCheckError(cutStartTimer(timer));
 
 
+    std::vector<float> out;
     for (int i = 0; i < ITERS; i++)
     {
-    std::vector<float> out = convolve1D(in, k);
+        out = convolve1D(in, k);
     }
 
     ofstream convolution;
     convolution.open("convolution.txt", ios::trunc);
 
+    cutilCheckError(cutStartTimer(timer));
 
     for(int i = 0; i < out.size(); i++)
     {
         convolution << out[i] << " ";
     }
 
+    cutilCheckError(cutStopTimer(timer));
+
     convolution << std::endl;
 
     convolution.close();
 
-    cutilCheckError(cutStopTimer(timer));
+
     double dSeconds = cutGetTimerValue(timer)/(1000.0);
     double dNumOps = ITERS * in.size() * k.size();
     double gflops = dNumOps/dSeconds/1.0e9;
 
     printf("Throughput = %.4f GFlop/s\n", gflops);
 
-    
+
 
     // allocate device memory
     //float* d_data_in;
