@@ -152,6 +152,10 @@ int main(int argc, char** argv)
     cutilSafeCall(cudaMalloc((void**) &d_data_out, sizeof(float) * out.size()));
     cutilSafeCall(cudaMemcpy(d_data_out, &out[0], sizeof(float) * out.size(), cudaMemcpyHostToDevice));
 
+    float* d_kernel;
+    cutilSafeCall(cudaMalloc((void**) &d_kernel, sizeof(float) * k.size()));
+    cutilSafeCall(cudaMemcpy(d_kernel, &k[0], sizeof(float) * k.size(), cudaMemcpyHostToDevice));
+
     unsigned int timer = 0;
     cutilCheckError(cutCreateTimer(&timer));
 
@@ -171,7 +175,7 @@ int main(int argc, char** argv)
             break;
 
             case 1:
-            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out, &k[0], k.size());
+            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out, d_kernel, k.size());
             break;
 
             case 2:
