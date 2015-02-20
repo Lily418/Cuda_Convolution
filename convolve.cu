@@ -126,7 +126,7 @@ int main(int argc, char** argv)
     cutilCheckError(cutCreateTimer(&timer));
     cutilCheckError(cutStartTimer(timer));
 
-    convolve1D(in, out, k);
+    //convolve1D(in, out, k);
 
     for(int i = 0; i < 5; i++)
     {
