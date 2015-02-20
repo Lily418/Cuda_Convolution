@@ -162,7 +162,7 @@ int main(int argc, char** argv)
             break;
 
             case 1:
-            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, );
+            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out);
             break;
 
             case 2:
