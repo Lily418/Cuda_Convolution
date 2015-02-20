@@ -133,6 +133,7 @@ int main(int argc, char** argv)
     cutilCheckError(cutStartTimer(timer));
     std::vector<float> out;
 
+    printf("Argc: %d \n", argc);
     if(argc != 2){
         printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised");
     }
