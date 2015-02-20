@@ -148,7 +148,7 @@ int main(int argc, char** argv)
             break;
 
             default:
-            printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised")
+            printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised");
             break;
         }
     }
