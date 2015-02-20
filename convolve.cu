@@ -118,7 +118,7 @@ int main(int argc, char** argv)
     sample.close();
 
     // allocate host memory
-    std::vector<float>  in = splitFloats(line, in);
+    std::vector<float>  in = splitFloats(line);
 
     std::vector<float> k;
     k.push_back(2);
