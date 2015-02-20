@@ -51,27 +51,27 @@ __global__ void convolve(float* data_in, float initial)
 /*
 * Reference CPU implementation, taken from http://www.songho.ca/dsp/convolution/convolution.html
 */
-bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSize)
+bool convolve1D(std::vector<float> in, std::vector<float> out, std::vector<float> kernel)
 {
+
     int i, j, k;
 
     // check validity of params
-    if(!in || !out || !kernel) return false;
-    if(dataSize <=0 || kernelSize <= 0) return false;
+    if(!in || !kernel) return false;
 
     // start convolution from out[kernelSize-1] to out[dataSize-1] (last)
-    for(i = kernelSize-1; i < dataSize; ++i)
+    for(i = kernel.size() -1; i < in.size(); ++i)
     {
         out[i] = 0;                             // init to 0 before accumulate
 
-        for(j = i, k = 0; k < kernelSize; --j, ++k)
+        for(j = i, k = 0; k < kernel.size(); --j, ++k)
         {
             out[i] += in[j] * kernel[k];
         }
     }
 
     // convolution from out[0] to out[kernelSize-2]
-    for(i = 0; i < kernelSize - 1; ++i)
+    for(i = 0; i < kernel.size() - 1; ++i)
     {
         out[i] = 0;                             // init to 0 before sum
 
@@ -84,7 +84,7 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
     return true;
 }
 
-float *splitFloats(string line){
+std::vector<float> splitFloats(string line){
     std::vector<float> floats;
     char *c_line = &line[0];
     char *endOfLine = &line[0] + line.length();
@@ -98,7 +98,7 @@ float *splitFloats(string line){
     for( std::vector<float>::const_iterator i = floats.begin(); i != floats.end(); ++i)
     std::cout << *i << ' ';
 
-    return &floats[0];
+    return floats;
 }
 
 /*
@@ -119,15 +119,22 @@ int main(int argc, char** argv)
     sample.close();
 
     // allocate host memory
-    float *in = splitFloats(line);
-    float out[5];
-    float k[2] = {2,1};
+    std::vector<float>  in = splitFloats(line);
+    std::vector<float>  out;
+
+    for(int i = 0; i < in.size(); i++){
+        out.push_back(0.0);
+    }
+
+    std::vector<float> k;
+    k.push_back(2);
+    k.push_back(1);
 
     unsigned int timer = 0;
     cutilCheckError(cutCreateTimer(&timer));
     cutilCheckError(cutStartTimer(timer));
 
-    convolve1D(in, out, 5, k, 2);
+    convolve1D(in, out, k);
 
     for(int i = 0; i < 5; i++)
     {
