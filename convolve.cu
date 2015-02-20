@@ -95,7 +95,7 @@ float *splitFloats(string line){
         c_line = end_pointer;
     }
 
-    for( std::vector<char>::const_iterator i = floats.begin(); i != floats.end(); ++i)
+    for( std::vector<float>::const_iterator i = floats.begin(); i != floats.end(); ++i)
     std::cout << *i << ' ';
 
     return &floats[0];
