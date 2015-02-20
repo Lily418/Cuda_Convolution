@@ -113,18 +113,18 @@ int main(int argc, char** argv)
     cutilSafeCall(cudaGetDeviceProperties(&props, devID));
 
     string sample_line;
-    string kernal_line;
+    string kernel_line;
     ifstream sample ("sample.txt");
     ifstream kernel ("kernel.txt");
     getline (sample, sample_line);
-    getline (kernel, kernal_line);
+    getline (kernel, kernel_line);
 
     sample.close();
     kernal.close();
 
     // allocate host memory
     std::vector<float>  in = splitFloats(sample_line);
-    std::vector<float> k   = splitFloats(kernal_line);
+    std::vector<float> k   = splitFloats(kernel_line);
 
     unsigned int timer = 0;
     cutilCheckError(cutCreateTimer(&timer));
