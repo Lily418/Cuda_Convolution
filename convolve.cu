@@ -92,9 +92,6 @@ std::vector<float> splitFloats(string line){
         c_line = end_pointer;
     }
 
-    for( std::vector<float>::const_iterator i = floats.begin(); i != floats.end(); ++i)
-    std::cout << *i << ' ';
-
     return floats;
 }
 
@@ -135,7 +132,7 @@ int main(int argc, char** argv)
 
     for(int i = 0; i < 5; i++)
     {
-        printf("%f, ", in[i]);
+        printf("%f, ", out[i]);
     }
 
     printf("\n");
