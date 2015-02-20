@@ -86,14 +86,13 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
 
 float *splitFloats(string line){
     std::vector<float> floats;
-    int seen_whitespace = 1;
-    for(std::string::size_type i = 0; i < line.size(); ++i) {
-        if(line[i] == ' ') seen_whitespace = 1;
-        if(seen_whitespace){
-            floats.push_back(strtof(&line.c_str()[i], NULL));
-            seen_whitespace = 0;
-        }
+    char *c_line = line.c_str();
+    char end_pointer = NULL;
 
+    while(c_line < c_line + line.length()){
+        floats.push_back(strtof(c_line, end_pointer));
+        c_line = end_pointer;
+        end_pointer = NULL;
     }
 
     return &floats[0];
