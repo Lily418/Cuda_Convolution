@@ -132,9 +132,14 @@ int main(int argc, char** argv)
 
     cutilCheckError(cutStartTimer(timer));
     std::vector<float> out;
+
+    if(argc != 2){
+        printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised");
+    }
+
     for (int i = 0; i < ITERS; i++)
     {
-        switch(atoi(argv[0])){
+        switch(atoi(argv[1])){
             case 0:
             out = convolve1D(in, k);
             break;
