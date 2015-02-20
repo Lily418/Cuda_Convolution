@@ -29,6 +29,8 @@
 
 using namespace std;
 
+#define BLOCK_SIZE 5
+#define GRID_SIZE 1
 const int ITERS = 100;
 
 /*
@@ -42,10 +44,12 @@ const int ITERS = 100;
 *
 * THIS YOU NEED TO CHANGE!
 */
-__global__ void convolve(float* data_in, float initial)
+__global__ void convolve(float* data_in, float* data_out)
 {
-    //int tx = threadIdx.x;
-    //int bk = blockIdx.x;
+    int tx = threadIdx.x;
+    int bk = blockIdx.x;
+    int pos = (bk * BLOCK_SIZE) + tx;
+    data_out[pos] = data_in[pos];
 }
 
 /*
@@ -114,7 +118,7 @@ int main(int argc, char** argv)
 
     string sample_line;
     string kernel_line;
-    ifstream sample ("sample.txt");
+    ifstream sample ("sample_small.txt");
     ifstream kernel ("kernel.txt");
     getline (sample, sample_line);
     getline (kernel, kernel_line);
@@ -125,17 +129,28 @@ int main(int argc, char** argv)
     // allocate host memory
     std::vector<float> in = splitFloats(sample_line);
     std::vector<float> k   = splitFloats(kernel_line);
+    std::vector<float> out;
+
+    float* d_data_in;
+    cutilSafeCall(cudaMalloc((void**) &d_data_in, sizeof(float) * in.size()));
+    cutilSafeCall(cudaMemcpy(d_data_in, &in[0], sizeof(float) * in.size(), cudaMemcpyHostToDevice));
+
+    float* d_data_out;
+
+    for(int i = 0; i < in.size(); i++){
+        out.push_back(0.0);
+    }
+    cutilSafeCall(cudaMalloc((void**) &d_data_out, sizeof(float) * out.size()));
+    cutilSafeCall(cudaMemcpy(d_data_out, &out[0], sizeof(float) * out.size(), cudaMemcpyHostToDevice));
 
     unsigned int timer = 0;
     cutilCheckError(cutCreateTimer(&timer));
 
 
     cutilCheckError(cutStartTimer(timer));
-    std::vector<float> out;
 
-    printf("Argc: %d \n", argc);
     if(argc != 2){
-        printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised");
+        printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised \n");
         return 1;
     }
 
@@ -147,7 +162,7 @@ int main(int argc, char** argv)
             break;
 
             case 1:
-            printf("To implement GPU");
+            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, );
             break;
 
             case 2:
