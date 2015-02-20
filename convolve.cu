@@ -111,8 +111,12 @@ int main(int argc, char** argv)
 
     // allocate host memory
     std::vector<float>  in;
-    splitFloats(line, in);
+    //splitFloats(line, in);
     std::vector<float>  out;
+
+    for(int i = 0; i < 5; i++){
+        in.push_back(0.0);
+    }
 
     for(int i = 0; i < in.size(); i++){
         out.push_back(0.0);
