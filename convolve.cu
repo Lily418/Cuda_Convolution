@@ -88,12 +88,11 @@ float *splitFloats(string line){
     std::vector<float> floats;
     char *c_line = &line[0];
     char *endOfLine = &line[0] + line.length();
-    char **end_pointer = NULL;
+    char *end_pointer = malloc(sizeof(char));
 
     while(c_line < endOfLine){
-        floats.push_back(strtof(c_line, end_pointer));
-        c_line = *end_pointer;
-        end_pointer = NULL;
+        floats.push_back(strtof(c_line, &end_pointer));
+        c_line = end_pointer;
     }
 
     return &floats[0];
