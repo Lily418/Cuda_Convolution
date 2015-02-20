@@ -81,8 +81,7 @@ bool convolve1D(std::vector<float> in, std::vector<float> out, std::vector<float
     return true;
 }
 
-std::vector<float> splitFloats(string line){
-    std::vector<float> floats;
+void splitFloats(string line, std::vector<float> floats){
     char *c_line = &line[0];
     char *endOfLine = &line[0] + line.length();
     char *end_pointer = (char*)malloc(sizeof(char));
@@ -91,8 +90,6 @@ std::vector<float> splitFloats(string line){
         floats.push_back(strtof(c_line, &end_pointer));
         c_line = end_pointer;
     }
-
-    return floats;
 }
 
 /*
@@ -113,7 +110,8 @@ int main(int argc, char** argv)
     sample.close();
 
     // allocate host memory
-    std::vector<float>  in = splitFloats(line);
+    std::vector<float>  in;
+    splitFloats(line, in);
     std::vector<float>  out;
 
     for(int i = 0; i < in.size(); i++){
