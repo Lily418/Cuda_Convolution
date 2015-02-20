@@ -90,7 +90,7 @@ float *splitFloats(string line){
     for(std::string::size_type i = 0; i < line.size(); ++i) {
         if(line[i] == ' ') seen_whitespace = 1;
         if(seen_whitespace){
-            floats.push_back(strtof(&line[i], NULL));
+            floats.push_back(strtof(&line.c_str()[i], NULL));
             seen_whitespace = 0;
         }
 
