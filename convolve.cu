@@ -134,7 +134,23 @@ int main(int argc, char** argv)
     std::vector<float> out;
     for (int i = 0; i < ITERS; i++)
     {
-        out = convolve1D(in, k);
+        switch(argv[0]){
+            case "CPU":
+            out = convolve1D(in, k);
+            break;
+
+            case "GPU":
+            printf("To implement GPU");
+            break;
+
+            case "GPU-Opt":
+            printf("To implement GPU-Opt");
+            break;
+
+            default:
+            printf("Please pass command line argument: CPU, GPU or GPU-Opt")
+            break;
+        }
     }
     cutilCheckError(cutStopTimer(timer));
 
