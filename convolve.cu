@@ -90,6 +90,8 @@ void splitFloats(string line, std::vector<float> floats){
         floats.push_back(strtof(c_line, &end_pointer));
         c_line = end_pointer;
     }
+
+    free(end_pointer);
 }
 
 /*
