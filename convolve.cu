@@ -179,7 +179,9 @@ int main(int argc, char** argv)
     ofstream convolution;
     convolution.open("convolution.txt", ios::trunc);
 
+    if(argc == 1 || argc == 2){
     cutilSafeCall(cudaMemcpy(&out[0], d_data_out, sizeof(float) * out.size() , cudaMemcpyDeviceToHost));
+    }
 
 
     for(int i = 0; i < out.size(); i++)
