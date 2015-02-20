@@ -132,12 +132,17 @@ int main(int argc, char** argv)
 
     std::vector<float> out = convolve1D(in, k);
 
+
+    ofstream convolution;
+    convolution.open("convolution.txt", ios::trunc);
+
+
     for(int i = 0; i < out.size(); i++)
     {
-        printf("%f, ", out[i]);
+        myfile << out[i] << " ";
     }
 
-    printf("\n");
+    convolution.close();
 
     cutilCheckError(cutStopTimer(timer));
     //printf("%d \n", success);
