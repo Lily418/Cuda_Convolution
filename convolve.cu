@@ -51,8 +51,13 @@ __global__ void convolve(float* data_in, float initial)
 /*
 * Reference CPU implementation, taken from http://www.songho.ca/dsp/convolution/convolution.html
 */
-bool convolve1D(std::vector<float> in, std::vector<float> out, std::vector<float> kernel)
+std::vector<float> convolve1D(std::vector<float> in, std::vector<float> kernel)
 {
+
+    std::vector<float> out;
+    for(int i = 0; i < in.size(); i++){
+        out.push_back(0.0);
+    }
 
     int i, j, k;
 
@@ -78,10 +83,11 @@ bool convolve1D(std::vector<float> in, std::vector<float> out, std::vector<float
         }
     }
 
-    return true;
+    return out;
 }
 
-void splitFloats(string line, std::vector<float> floats){
+std::vector<float> splitFloats(string line){
+    std::vector<float> floats;
     char *c_line = &line[0];
     char *endOfLine = &line[0] + line.length();
     char *end_pointer = (char*)malloc(sizeof(char));
@@ -90,6 +96,8 @@ void splitFloats(string line, std::vector<float> floats){
         floats.push_back(strtof(c_line, &end_pointer));
         c_line = end_pointer;
     }
+
+    return floats;
 }
 
 /*
@@ -110,17 +118,7 @@ int main(int argc, char** argv)
     sample.close();
 
     // allocate host memory
-    std::vector<float>  in;
-    //splitFloats(line, in);
-    std::vector<float>  out;
-
-    for(int i = 0; i < 5; i++){
-        in.push_back(0.0);
-    }
-
-    for(int i = 0; i < in.size(); i++){
-        out.push_back(0.0);
-    }
+    std::vector<float>  in = splitFloats(line, in);
 
     std::vector<float> k;
     k.push_back(2);
@@ -130,9 +128,9 @@ int main(int argc, char** argv)
     cutilCheckError(cutCreateTimer(&timer));
     cutilCheckError(cutStartTimer(timer));
 
-    //convolve1D(in, out, k);
+    std::vector<float> out = convolve1D(in, k);
 
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < out.size(); i++)
     {
         printf("%f, ", out[i]);
     }
