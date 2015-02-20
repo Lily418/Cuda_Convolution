@@ -56,9 +56,6 @@ bool convolve1D(std::vector<float> in, std::vector<float> out, std::vector<float
 
     int i, j, k;
 
-    // check validity of params
-    if(!in || !kernel) return false;
-
     // start convolution from out[kernelSize-1] to out[dataSize-1] (last)
     for(i = kernel.size() -1; i < in.size(); ++i)
     {
