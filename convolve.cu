@@ -130,26 +130,25 @@ int main(int argc, char** argv)
     cutilCheckError(cutCreateTimer(&timer));
 
 
+    cutilCheckError(cutStartTimer(timer));
     std::vector<float> out;
     for (int i = 0; i < ITERS; i++)
     {
         out = convolve1D(in, k);
     }
+    cutilCheckError(cutStopTimer(timer));
 
     ofstream convolution;
     convolution.open("convolution.txt", ios::trunc);
 
-    cutilCheckError(cutStartTimer(timer));
+
 
     for(int i = 0; i < out.size(); i++)
     {
         convolution << out[i] << " ";
     }
 
-    cutilCheckError(cutStopTimer(timer));
-
     convolution << std::endl;
-
     convolution.close();
 
 
