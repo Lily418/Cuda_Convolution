@@ -136,6 +136,7 @@ int main(int argc, char** argv)
     printf("Argc: %d \n", argc);
     if(argc != 2){
         printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised");
+        return 1;
     }
 
     for (int i = 0; i < ITERS; i++)
