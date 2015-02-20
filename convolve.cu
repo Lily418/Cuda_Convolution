@@ -120,7 +120,7 @@ int main(int argc, char** argv)
     getline (kernel, kernel_line);
 
     sample.close();
-    kernal.close();
+    kernel.close();
 
     // allocate host memory
     std::vector<float>  in = splitFloats(sample_line);
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
 
     for(int i = 0; i < out.size(); i++)
     {
-        myfile << out[i] << " ";
+        convolution << out[i] << " ";
     }
 
     convolution.close();
