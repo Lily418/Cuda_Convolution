@@ -51,11 +51,11 @@ __global__ void convolve(float* data_in, float* data_out, float* kernel, int ker
     int pos = (bk * BLOCK_SIZE) + tx;
     data_out[pos] = 0;
 
-    for(int i = 0; i < kernelSize; i++){
+    /**for(int i = 0; i < kernelSize; i++){
         if(pos - i >= 0) {
             data_out[pos] += kernel[i] * data_in[pos - i];
         }
-    }
+    }**/
 
 }
 
