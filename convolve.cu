@@ -90,7 +90,7 @@ float *splitFloats(string line){
     for(std::string::size_type i = 0; i < line.size(); ++i) {
         if(line[i] == ' ') seen_whitespace = 1;
         if(seen_whitespace){
-            floats.push_back(strtof(&line[i]));
+            floats.push_back(strtof(&line[i]), NULL);
             seen_whitespace = 0;
         }
 
@@ -113,11 +113,11 @@ int main(int argc, char** argv)
 
     string line;
     ifstream sample ("sample.txt");
-    getline (myfile,line)
+    getline (sample,line);
     sample.close();
 
     // allocate host memory
-    float in[5] = splitFloats(line);
+    float *in = splitFloats(line);
     float out[5];
     float k[2] = {2,1};
 
