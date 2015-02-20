@@ -44,8 +44,8 @@ const int ITERS = 100;
 */
 __global__ void convolve(float* data_in, float initial)
 {
-    int tx = threadIdx.x;
-    int bk = blockIdx.x;
+    //int tx = threadIdx.x;
+    //int bk = blockIdx.x;
 }
 
 /*
@@ -84,7 +84,7 @@ bool convolve1D(float* in, float* out, int dataSize, float* kernel, int kernelSi
     return true;
 }
 
-float[] splitFloats(string line){
+float *splitFloats(string line){
     std::vector<float> floats;
     int seen_whitespace = 1;
     for(std::string::size_type i = 0; i < line.size(); ++i) {
