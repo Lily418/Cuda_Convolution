@@ -44,12 +44,19 @@ const int ITERS = 100;
 *
 * THIS YOU NEED TO CHANGE!
 */
-__global__ void convolve(float* data_in, float* data_out)
+__global__ void convolve(float* data_in, float* data_out, float* kernel, int kernelSize)
 {
     int tx = threadIdx.x;
     int bk = blockIdx.x;
     int pos = (bk * BLOCK_SIZE) + tx;
-    data_out[pos] = data_in[pos];
+    data_out[pos] = 0;
+
+    for(int i = 0; i < kernalSize; i++){
+        if(pos - i > 0) {
+            data_out[pos] += kernel[i] * data_in[pos - i];
+        }
+    }
+
 }
 
 /*
