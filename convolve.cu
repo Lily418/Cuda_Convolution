@@ -179,7 +179,7 @@ int main(int argc, char** argv)
     ofstream convolution;
     convolution.open("convolution.txt", ios::trunc);
 
-    if(argv[1] == 1 || argv[1] == 2){
+    if(atoi(argv[1]) == 1 || atoi(argv[1]) == 2){
     cutilSafeCall(cudaMemcpy(&out[0], d_data_out, sizeof(float) * out.size() , cudaMemcpyDeviceToHost));
     }
 
