@@ -70,8 +70,6 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
     data_out[pos] = 0;
 
     for(int i = 0; i < kernelSize; i++){
-        //data_out[pos] += kernel[i] * data_in_shared[tx + i];
-        //data_out[pos] += kernel[i] * data_in_shared[tx + i];
         data_out[pos] += kernel[i] * data_in_shared[tx + i];
     }
 
@@ -202,9 +200,8 @@ int main(int argc, char** argv)
     int GRID_SIZE;
 
     if(outputSize <= 256){
-        GRID_SIZE = 2;
-        //BLOCK_SIZE = outputSize;
-        BLOCK_SIZE = 5;
+        GRID_SIZE = 1;
+        BLOCK_SIZE = outputSize;
     } else if(outputSize % 256 == 0) {
         BLOCK_SIZE = 256;
         GRID_SIZE = outputSize / 256;
