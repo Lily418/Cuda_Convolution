@@ -54,13 +54,21 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
 {
     int tx = threadIdx.x;
     int bk = blockIdx.x;
+
+    extern __shared__ int data_in_shared[];
+
     int pos = (bk * BLOCK_SIZE) + tx;
+
+    if(tx == 0){
+        for(int i = 0; i < BLOCK_SIZE + kernelSize; i++){
+            data_in_shared[i] = data_in[pos + i];
+        }
+    }
+
     data_out[pos] = 0;
 
     for(int i = 0; i < kernelSize; i++){
-        if(pos - i >= 0) {
-            data_out[pos] += kernel[i] * data_in[pos - i];
-        }
+        data_out[pos] += kernel[i] * data_in_shared[tx + i];
     }
 
 }
@@ -148,10 +156,10 @@ int main(int argc, char** argv)
 
     std::vector<float> in;
     if(atoi(argv[1]) == 2){
-        //for(int i = 0; i < k.size() - 1; i++){
-        //    in.push_back(0);
-        //}
-        //std::reverse(k.begin(), k.end());
+        for(int i = 0; i < k.size() - 1; i++){
+            in.push_back(0);
+        }
+        std::reverse(k.begin(), k.end());
     }
     in = splitFloats(sample_line, in);
 
@@ -160,8 +168,7 @@ int main(int argc, char** argv)
     if(atoi(argv[1]) != 2){
         outputSize = in.size();
     } else {
-        //outputSize = in.size() - k.size() + 1;
-        outputSize = in.size();
+        outputSize = in.size() - k.size() + 1;
     }
 
     std::vector<float> out;
@@ -213,7 +220,7 @@ int main(int argc, char** argv)
             break;
 
             case 2:
-            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE>>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
+            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE, BLOCK_SIZE + k.size()>>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
             break;
 
             default:
