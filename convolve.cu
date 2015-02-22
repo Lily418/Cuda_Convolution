@@ -57,8 +57,8 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
     int pos = (bk * BLOCK_SIZE) + tx;
     data_out[pos] = 0;
 
-    data_out[pos] += kernel[0] * data_in[pos + i];
-    data_out[pos] += kernel[1] * data_in[pos + i];
+    data_out[pos] += kernel[0] * data_in[pos];
+    data_out[pos] += kernel[1] * data_in[pos + 1];
 }
 
 /*
