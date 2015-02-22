@@ -244,4 +244,8 @@ int main(int argc, char** argv)
     double gflops = dNumOps/dSeconds/1.0e9;
 
     printf("Throughput = %.4f GFlop/s\n", gflops);
+    
+    cutilSafeCall(cudaFree(d_data_in));
+    cutilSafeCall(cudaFree(d_kernel));
+    cudaThreadExit();
 }
