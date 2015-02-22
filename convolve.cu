@@ -32,17 +32,7 @@ using namespace std;
 
 const int ITERS = 100;
 
-/*
-* Calculate the reduce by f of all elements in data_in and
-* store the result at a location of your choice in in data_out.
-*
-* The initial implementation is correct but totally sequential,
-* and it only uses one thread.
-* Improve it, to take advantage of GPU parallelism.
-* To ensure performance, identify and avoid divergences!
-*
-* THIS YOU NEED TO CHANGE!
-*/
+
 __global__ void convolve(float* data_in, float* data_out, float* kernel, int kernelSize, int BLOCK_SIZE)
 {
     int tx = threadIdx.x;
@@ -53,6 +43,34 @@ __global__ void convolve(float* data_in, float* data_out, float* kernel, int ker
     for(int i = 0; i < kernelSize; i++){
         if(pos - i >= 0) {
             data_out[pos] += kernel[i] * data_in[pos - i];
+        }
+    }
+
+}
+
+__global__ void convolve_optimised(float* data_in, float* data_out, float* kernel, int kernelSize, int BLOCK_SIZE)
+{
+    __shared__ float kernelShared[kernelSize];
+
+
+    int tx = threadIdx.x;
+    int bk = blockIdx.x;
+
+    if(tx == 0){
+        for(int i = 0; i < kernelSize; i++){
+            kernelShared[i] = kernel[i];
+        }
+    }
+
+    __syncthreads();
+
+
+    int pos = (bk * BLOCK_SIZE) + tx;
+    data_out[pos] = 0;
+
+    for(int i = 0; i < kernelSize; i++){
+        if(pos - i >= 0) {
+            data_out[pos] += kernelShared[i] * data_in[pos - i];
         }
     }
 
@@ -190,7 +208,7 @@ int main(int argc, char** argv)
             break;
 
             case 2:
-            printf("To implement GPU-Opt");
+            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
             break;
 
             default:
