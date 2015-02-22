@@ -30,7 +30,7 @@
 using namespace std;
 
 
-const int ITERS = 100;
+const int ITERS = 500;
 
 
 __global__ void convolve(float* data_in, float* data_out, float* kernel, int kernelSize, int BLOCK_SIZE)
