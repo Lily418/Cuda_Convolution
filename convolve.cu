@@ -118,6 +118,11 @@ std::vector<float> splitFloats(string line, std::vector<float> floats){
 */
 int main(int argc, char** argv)
 {
+    if(argc != 3){
+        printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised. Followed by path to data file to read, e.g. sample.txt\n");
+        return 1;
+    }
+
     int devID;
     cudaDeviceProp props;
 
@@ -151,7 +156,7 @@ int main(int argc, char** argv)
     if(atoi(argv[1]) != 2){
         outputSize = in.size();
     } else {
-        outputSize = in.size() - k.size() - 1;
+        outputSize = in.size() - k.size() + 1;
     }
 
     std::vector<float> out;
@@ -176,11 +181,6 @@ int main(int argc, char** argv)
 
 
     cutilCheckError(cutStartTimer(timer));
-
-    if(argc != 3){
-        printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised. Followed by path to data file to read, e.g. sample.txt\n");
-        return 1;
-    }
 
     int BLOCK_SIZE;
     int GRID_SIZE;
