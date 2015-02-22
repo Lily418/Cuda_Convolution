@@ -43,7 +43,7 @@ const int ITERS = 100;
 *
 * THIS YOU NEED TO CHANGE!
 */
-__global__ void convolve(float* data_in, float* data_out, float* kernel, int kernelSize)
+__global__ void convolve(float* data_in, float* data_out, float* kernel, int kernelSize, int BLOCK_SIZE)
 {
     int tx = threadIdx.x;
     int bk = blockIdx.x;
@@ -174,7 +174,7 @@ int main(int argc, char** argv)
         BLOCK_SIZE = 256;
         GRID_SIZE = in.size() / 256;
     } else {
-        printf("Size of Sample vector should be less than 256 or a multiple of 256")
+        printf("Size of Sample vector should be less than 256 or a multiple of 256");
         return 1;
     }
 
@@ -186,7 +186,7 @@ int main(int argc, char** argv)
             break;
 
             case 1:
-            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out, d_kernel, k.size());
+            convolve<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
             break;
 
             case 2:
