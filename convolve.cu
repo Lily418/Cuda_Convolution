@@ -60,7 +60,7 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
     int pos = (bk * BLOCK_SIZE) + tx;
 
     if(tx == 0){
-        for(int i = 0; i < BLOCK_SIZE + kernelSize; i++){
+        for(int i = 0; i < BLOCK_SIZE + kernelSize -1; i++){
             data_in_shared[i] = data_in[pos + i];
         }
     }
