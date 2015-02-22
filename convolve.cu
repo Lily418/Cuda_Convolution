@@ -199,12 +199,12 @@ int main(int argc, char** argv)
     int BLOCK_SIZE;
     int GRID_SIZE;
 
-    if(outputSize <= 256){
+    if(outputSize <= 128){
         GRID_SIZE = 1;
         BLOCK_SIZE = outputSize;
-    } else if(outputSize % 256 == 0) {
-        BLOCK_SIZE = 256;
-        GRID_SIZE = outputSize / 256;
+    } else if(outputSize % 128 == 0) {
+        BLOCK_SIZE = 128;
+        GRID_SIZE = outputSize / 128;
     } else {
         printf("Size of Sample vector should be less than 256 or a multiple of 256");
         return 1;
