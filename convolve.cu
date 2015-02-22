@@ -29,8 +29,7 @@
 
 using namespace std;
 
-#define BLOCK_SIZE 256
-#define GRID_SIZE 16
+
 const int ITERS = 100;
 
 /*
@@ -162,6 +161,20 @@ int main(int argc, char** argv)
 
     if(argc != 3){
         printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised. Followed by path to data file to read, e.g. sample.txt\n");
+        return 1;
+    }
+
+    int BLOCK_SIZE;
+    int GRID_SIZE;
+
+    if(in.size() <= 256){
+        GRID_SIZE = 1;
+        BLOCK_SIZE = in.size();
+    } else if(in.size() % 256 == 0) {
+        BLOCK_SIZE = 256;
+        GRID_SIZE = in.size() / 256;
+    } else {
+        printf("Size of Sample vector should be less than 256 or a multiple of 256")
         return 1;
     }
 
