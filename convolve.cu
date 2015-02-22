@@ -65,6 +65,8 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
         }
     }
 
+    __syncthreads();
+
     data_out[pos] = 0;
 
     for(int i = 0; i < kernelSize; i++){
