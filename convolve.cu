@@ -26,6 +26,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -50,18 +52,13 @@ __global__ void convolve(float* data_in, float* data_out, float* kernel, int ker
 
 __global__ void convolve_optimised(float* data_in, float* data_out, float* kernel, int kernelSize, int BLOCK_SIZE)
 {
-    extern __shared__ int ks[];
-    for(int i = 0; i < kernelSize; i++){
-        ks[i] = kernel[i];
-    }
-
     int tx = threadIdx.x;
     int bk = blockIdx.x;
     int pos = (bk * BLOCK_SIZE) + tx;
     data_out[pos] = 0;
 
     for(int i = 0; i < kernelSize; i++){
-        data_out[pos] += ks[i] * data_in[pos + kernelSize - 1 - i];
+        data_out[pos] += kernel[i] * data_in[pos + kernelSize - 1 - i];
     }
 
 }
@@ -152,6 +149,7 @@ int main(int argc, char** argv)
         for(int i = 0; i < k.size() - 1; i++){
             in.push_back(0);
         }
+        std::reverse(k.begin(), k.end());
     }
     in = splitFloats(sample_line, in);
 
@@ -212,7 +210,7 @@ int main(int argc, char** argv)
             break;
 
             case 2:
-            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE, k.size()>>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
+            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE>>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
             break;
 
             default:
@@ -244,7 +242,7 @@ int main(int argc, char** argv)
     double gflops = dNumOps/dSeconds/1.0e9;
 
     printf("Throughput = %.4f GFlop/s\n", gflops);
-    
+
     cutilSafeCall(cudaFree(d_data_in));
     cutilSafeCall(cudaFree(d_kernel));
     cudaThreadExit();
