@@ -50,7 +50,7 @@ __global__ void convolve(float* data_in, float* data_out, float* kernel, int ker
 
 __global__ void convolve_optimised(float* data_in, float* data_out, float* kernel, int kernelSize, int BLOCK_SIZE)
 {
-    __shared__ float kernelShared[kernelSize];
+    extern __shared__ float kernelShared[];
 
 
     int tx = threadIdx.x;
@@ -208,7 +208,7 @@ int main(int argc, char** argv)
             break;
 
             case 2:
-            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE >>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
+            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE, k.size()>>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
             break;
 
             default:
