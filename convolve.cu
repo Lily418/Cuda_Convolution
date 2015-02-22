@@ -57,8 +57,12 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
     int pos = (bk * BLOCK_SIZE) + tx;
     data_out[pos] = 0;
 
-    data_out[pos] += kernel[0] * data_in[pos];
-    data_out[pos] += kernel[1] * data_in[pos + 1];
+    for(int i = 0; i < kernelSize; i++){
+        if(pos - i >= 0) {
+            data_out[pos] += kernel[i] * data_in[pos - i];
+        }
+    }
+
 }
 
 /*
@@ -144,10 +148,10 @@ int main(int argc, char** argv)
 
     std::vector<float> in;
     if(atoi(argv[1]) == 2){
-        for(int i = 0; i < k.size() - 1; i++){
-            in.push_back(0);
-        }
-        std::reverse(k.begin(), k.end());
+        //for(int i = 0; i < k.size() - 1; i++){
+        //    in.push_back(0);
+        //}
+        //std::reverse(k.begin(), k.end());
     }
     in = splitFloats(sample_line, in);
 
@@ -156,7 +160,8 @@ int main(int argc, char** argv)
     if(atoi(argv[1]) != 2){
         outputSize = in.size();
     } else {
-        outputSize = in.size() - k.size() + 1;
+        //outputSize = in.size() - k.size() + 1;
+        outputSize = in.size();
     }
 
     std::vector<float> out;
