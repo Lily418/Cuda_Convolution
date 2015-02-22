@@ -1,0 +1,10 @@
+The naive version of the algorithm checks the bounds of the input array to calculate the case handled by
+the second part of the CPU implementation denoted with the comment // convolution from out[0] to out[kernelSize-2]
+This if statement causes divergence so the optimised version puts extra 0's at the start of the input vector to avoid
+this case
+
+I reversed the kernal before inputting in into the optimised version to attempt to better align memory accesses,
+however this doesn't improve performance, suggesting that sequentially increasing accesses are optimised in the
+same way as sequentially decreasing.
+
+I also move the section of the vector needed by each block from global to shared memory. 
