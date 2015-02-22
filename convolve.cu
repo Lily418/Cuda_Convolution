@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 
     string sample_line;
     string kernel_line;
-    ifstream sample ("sample.txt");
+    ifstream sample (argv[2]);
     ifstream kernel ("kernel.txt");
     getline (sample, sample_line);
     getline (kernel, kernel_line);
@@ -160,8 +160,8 @@ int main(int argc, char** argv)
 
     cutilCheckError(cutStartTimer(timer));
 
-    if(argc != 2){
-        printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised \n");
+    if(argc != 3){
+        printf("Please pass command line argument: 0 for CPU, 1 for GPU, 2 for GPU Optimised. Followed by path to data file to read, e.g. sample.txt\n");
         return 1;
     }
 
