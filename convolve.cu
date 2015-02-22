@@ -29,8 +29,8 @@
 
 using namespace std;
 
-#define BLOCK_SIZE 5
-#define GRID_SIZE 1
+#define BLOCK_SIZE 256
+#define GRID_SIZE 16
 const int ITERS = 100;
 
 /*
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 
     string sample_line;
     string kernel_line;
-    ifstream sample ("sample_small.txt");
+    ifstream sample ("sample.txt");
     ifstream kernel ("kernel.txt");
     getline (sample, sample_line);
     getline (kernel, kernel_line);
