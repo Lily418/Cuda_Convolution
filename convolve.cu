@@ -56,7 +56,7 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
     data_out[pos] = 0;
 
     for(int i = 0 + kernelSize - 1; i < kernelSize; i++){
-        data_out[pos] += kernelShared[i] * data_in[pos - i];
+        data_out[pos] += kernel[i] * data_in[pos - i];
     }
 
 }
@@ -202,7 +202,7 @@ int main(int argc, char** argv)
             break;
 
             case 2:
-            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE, k.size()>>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
+            convolve_optimised<<<GRID_SIZE, BLOCK_SIZE>>>(d_data_in, d_data_out, d_kernel, k.size(), BLOCK_SIZE);
             break;
 
             default:
