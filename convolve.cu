@@ -134,6 +134,9 @@ int main(int argc, char** argv)
     sample.close();
     kernel.close();
 
+    std::vector<float> k;
+    k = splitFloats(kernel_line, k);
+
     std::vector<float> in;
     if(atoi(argv[1]) == 2){
         for(int i = 0; i < k.size() - 1; i++){
@@ -141,9 +144,7 @@ int main(int argc, char** argv)
         }
     }
     in = splitFloats(sample_line, in);
-    // allocate host memory
-    std::vector<float> k;
-    k = splitFloats(kernel_line, k);
+
 
     std::vector<float> out;
 
