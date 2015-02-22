@@ -56,7 +56,8 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
     data_out[pos] = 0;
 
     for(int i = 0 + kernelSize - 1; i < kernelSize; i++){
-        data_out[pos] += kernel[i] * data_in[pos + kernelSize - 1 - i];
+        data_out[pos] = data_in[pos + kernelSize - 1];
+        //data_out[pos] += kernel[i] * data_in[pos + kernelSize - 1 - i];
     }
 
 }
@@ -146,9 +147,15 @@ int main(int argc, char** argv)
     in = splitFloats(sample_line, in);
 
 
-    std::vector<float> out;
+    int outputSize;
+    if(atoi(argv[1]) != 2){
+        outputSize = in.size();
+    } else {
+        outputSize = in.size() - k.size() - 1;
+    }
 
-    for(int i = 0; i < in.size(); i++){
+    std::vector<float> out;
+    for(int i = 0; i < outputSize; i++){
         out.push_back(0.0);
     }
 
@@ -178,12 +185,12 @@ int main(int argc, char** argv)
     int BLOCK_SIZE;
     int GRID_SIZE;
 
-    if(in.size() <= 256){
+    if(outputSize <= 256){
         GRID_SIZE = 1;
-        BLOCK_SIZE = in.size();
-    } else if(in.size() % 256 == 0) {
+        BLOCK_SIZE = outputSize;
+    } else if(outputSize % 256 == 0) {
         BLOCK_SIZE = 256;
-        GRID_SIZE = in.size() / 256;
+        GRID_SIZE = outputSize / 256;
     } else {
         printf("Size of Sample vector should be less than 256 or a multiple of 256");
         return 1;
