@@ -99,8 +99,7 @@ std::vector<float> convolve1D(std::vector<float> in, std::vector<float> kernel)
     return out;
 }
 
-std::vector<float> splitFloats(string line){
-    std::vector<float> floats;
+std::vector<float> splitFloats(string line, std::vector<float> floats){
     char *c_line = &line[0];
     char *endOfLine = &line[0] + line.length();
     char *end_pointer = (char*)malloc(sizeof(char));
@@ -135,22 +134,21 @@ int main(int argc, char** argv)
     sample.close();
     kernel.close();
 
+    std::vector<float> in;
+    if(atoi(argv[1]) == 2){
+        for(int i = 0; i < k.size() - 1; i++){
+            in.push_back(0);
+        }
+    }
+    in = splitFloats(sample_line, in);
     // allocate host memory
-    std::vector<float> in = splitFloats(sample_line);
-    std::vector<float> k   = splitFloats(kernel_line);
-
-
+    std::vector<float> k;
+    k = splitFloats(kernel_line, k);
 
     std::vector<float> out;
 
     for(int i = 0; i < in.size(); i++){
         out.push_back(0.0);
-    }
-
-    if(atoi(argv[1]) == 2){
-        for(int i = 0; i < k.size() - 1; i++){
-            in.insert(0, 0);
-        }
     }
 
     float* d_data_in;
