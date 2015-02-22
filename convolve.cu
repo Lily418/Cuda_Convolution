@@ -50,28 +50,13 @@ __global__ void convolve(float* data_in, float* data_out, float* kernel, int ker
 
 __global__ void convolve_optimised(float* data_in, float* data_out, float* kernel, int kernelSize, int BLOCK_SIZE)
 {
-    extern __shared__ float kernelShared[];
-
-
     int tx = threadIdx.x;
     int bk = blockIdx.x;
-
-    if(tx == 0){
-        for(int i = 0; i < kernelSize; i++){
-            kernelShared[i] = kernel[i];
-        }
-    }
-
-    __syncthreads();
-
-
     int pos = (bk * BLOCK_SIZE) + tx;
     data_out[pos] = 0;
 
-    for(int i = 0; i < kernelSize; i++){
-        if(pos - i >= 0) {
-            data_out[pos] += kernelShared[i] * data_in[pos - i];
-        }
+    for(int i = 0 + kernelSize - 1; i < kernelSize; i++){
+        data_out[pos] += kernelShared[i] * data_in[pos - i];
     }
 
 }
@@ -153,17 +138,26 @@ int main(int argc, char** argv)
     // allocate host memory
     std::vector<float> in = splitFloats(sample_line);
     std::vector<float> k   = splitFloats(kernel_line);
+
+
+
     std::vector<float> out;
+
+    for(int i = 0; i < in.size(); i++){
+        out.push_back(0.0);
+    }
+
+    if(atoi(argv[1]) == 2){
+        for(int i = 0; i < k.size() - 1; i++){
+            in.insert(0, 0);
+        }
+    }
 
     float* d_data_in;
     cutilSafeCall(cudaMalloc((void**) &d_data_in, sizeof(float) * in.size()));
     cutilSafeCall(cudaMemcpy(d_data_in, &in[0], sizeof(float) * in.size(), cudaMemcpyHostToDevice));
 
     float* d_data_out;
-
-    for(int i = 0; i < in.size(); i++){
-        out.push_back(0.0);
-    }
     cutilSafeCall(cudaMalloc((void**) &d_data_out, sizeof(float) * out.size()));
     cutilSafeCall(cudaMemcpy(d_data_out, &out[0], sizeof(float) * out.size(), cudaMemcpyHostToDevice));
 
@@ -222,7 +216,7 @@ int main(int argc, char** argv)
     convolution.open("convolution.txt", ios::trunc);
 
     if(atoi(argv[1]) == 1 || atoi(argv[1]) == 2){
-    cutilSafeCall(cudaMemcpy(&out[0], d_data_out, sizeof(float) * out.size() , cudaMemcpyDeviceToHost));
+        cutilSafeCall(cudaMemcpy(&out[0], d_data_out, sizeof(float) * out.size() , cudaMemcpyDeviceToHost));
     }
 
 
