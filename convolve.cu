@@ -61,7 +61,7 @@ __global__ void convolve_optimised(float* data_in, float* data_out, float* kerne
 
     data_in_shared[pos] = data_in[pos];
     if(tx == 0){
-        for(int i = pos + BLOCK_SIZE; i < pos + BLOCK_SIZE + kernelSize; i++){
+        for(int i = pos + BLOCK_SIZE; i < pos + BLOCK_SIZE + kernelSize - 1; i++){
             data_in_shared[i] = data_in[i];
         }
     }
